@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editCep =     (EditText) findViewById(R.id.editCep);
+        editCep = (EditText) findViewById(R.id.editCep);
         botaoRecuperar = findViewById(R.id.buttonRecuperar);
-        textoResultado =   findViewById(R.id.textResultado);
+        textoResultado = findViewById(R.id.textResultado);
 
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +93,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String resultado) {
             super.onPostExecute(resultado);
-            textoResultado.setText(resultado);
+
+            String cep = null;
+            String logradouro = null;
+            String bairro = null;
+            String localidade = null;
+            String estado = null;
+            try {
+                JSONObject jsonObject = new JSONObject(resultado);
+                cep = jsonObject.getString("cep");
+                logradouro = jsonObject.getString("logradouro");
+                bairro = jsonObject.getString("bairro");
+                localidade = jsonObject.getString("localidade");
+                estado = jsonObject.getString("uf");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            textoResultado.setText("CEP: "+cep+"\n"+"Logradouro: "+logradouro+"\n"+"Bairro: "+bairro+"\n"+"Cidade: "+localidade+"\n"+"UF: "+estado);
         }
     }
 
