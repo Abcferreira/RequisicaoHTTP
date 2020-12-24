@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.requisicoes.cursoandroid.requisicoeshttp.api.CEPService;
+import com.requisicoes.cursoandroid.requisicoeshttp.model.CEP;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,11 +22,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button botaoRecuperar;
     private TextView textoResultado;
     private EditText editCep;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +44,16 @@ public class MainActivity extends AppCompatActivity {
         botaoRecuperar = findViewById(R.id.buttonRecuperar);
         textoResultado = findViewById(R.id.textResultado);
 
+        retrofit = new Retrofit.Builder().baseUrl("https://viacep.com.br/ws/").addConverterFactory(GsonConverterFactory.create()).build();
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recuperarCEPRetrofit();
+                /*
                 MyTask task = new MyTask();
-                String cep = editCep.getText().toString();
-                String urlCep = "https://viacep.com.br/ws/" + cep + "/json/";
-                task.execute(urlCep);
+                String cepValue = editCep.getText().toString();
+                String urlCep = "https://viacep.com.br/ws/08610100/json/";
+                task.execute(urlCep);*/
             }
         });
 
@@ -109,8 +122,27 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            textoResultado.setText("CEP: "+cep+"\n"+"Logradouro: "+logradouro+"\n"+"Bairro: "+bairro+"\n"+"Cidade: "+localidade+"\n"+"UF: "+estado);
+            textoResultado.setText("CEP: " + cep + "\n" + "Logradouro: " + logradouro + "\n" + "Bairro: " + bairro + "\n" + "Cidade: " + localidade + "\n" + "UF: " + estado);
         }
     }
 
+    private void recuperarCEPRetrofit() {
+        CEPService cepService = retrofit.create(CEPService.class);
+        Call<CEP> call = cepService.recuperarCEP(editCep.getText().toString());
+
+        call.enqueue(new Callback<CEP>() {
+            @Override
+            public void onResponse(Call<CEP> call, Response<CEP> response) {
+                if (response.isSuccessful()){
+                    CEP cep = response.body();
+                    textoResultado.setText("CEP: " + cep.getCep() + "\n" + "Logradouro: " + cep.getLogradouro() + "\n" + "Bairro: " + cep.getBairro() + "\n" + "Cidade: " + cep.getLocalidade() + "\n" + "UF: " + cep.getUf());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CEP> call, Throwable t) {
+
+            }
+        });
+    }
 }
