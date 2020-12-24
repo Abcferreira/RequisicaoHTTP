@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context="com.requisicoes.cursoandroid.requisicoeshttp.MainActivity">
+
+    <EditText
+        android:id="@+id/editCep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="center"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/buttonRecuperar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recuperar dados" />
+
+    <TextView
+        android:id="@+id/textResultado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Resultado" />
+
+</LinearLayout>
